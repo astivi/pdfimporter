@@ -25,34 +25,35 @@ module Importers
     def initialize(filename)
       @filename = filename
       @extract_right_holder_regex = /(\d+)\W+([\w\s\.]+)\W+([\w\s]+)?\W+([\d\.]+)?\s(\w+)?\W+(\w+)\W+([\d]+,[\d]*).*/
-      @extract_work_regex = /(\d+)\W+(.\-.{3}\..{3}\..{3}\-.)\W+([\w\s]+)\W+(\w+)\W+(.+)/
+      @extract_work_regex = /(\d+)\W+(.\-.{3}\..{3}\..{3}\-.)\W+((?:[\w!\(\)]\s?)+)\W+([LB|BL|DU|HO|DP|DE|CO|EC|\/]+)\W+(.+)/
     end
 
     def works
       reader = PDF::Reader.new(@filename)
-      parsing_work = true
       works = []
       work = nil
       right_holders = []
       reader.pages.each do |page|
         lines = page.text.split(/\r?\n/)
         (0..lines.size-1).each do |line|
-          if parsing_work
-            work = work(lines[line])
-            parsing_work = false unless work.nil?
-          else
-            rh = right_holder(lines[line])
-            if rh.nil?
+          line_as_work = work(lines[line])
+          unless line_as_work.nil?
+            unless work.nil?
               work[:right_holders] = right_holders
               works << work
-              parsing_work = true
-              right_holders = []
-            else
-              right_holders << rh
             end
+            work = line_as_work
+            right_holders = []
+            next
+          end
+          line_as_rh = right_holder(lines[line])
+          unless line_as_rh.nil?
+            right_holders << line_as_rh
           end
         end
       end
+      work[:right_holders] = right_holders
+      works << work
       works
     end
 
@@ -85,7 +86,7 @@ module Importers
     private
 
     def share(match)
-      match[RightHolderIndexes::SHARE].gsub(',', '.').to_f #gsub necessario por causa do locale, encontrar solução independente do locale.
+      match[RightHolderIndexes::SHARE].gsub(',', '.').to_f #gsub necessario por causa da separação de decimal por vírgula ou ponto, encontrar solução independente do locale.
     end
 
     def external_ids(match)

@@ -1,3 +1,5 @@
+require 'pdf-reader'
+
 module Importers
   class PdfEcad
     CATEGORIES = {'CA' => 'Author', 'E' => 'Publisher', 'V' => 'Versionist', 'SE' => 'SubPublisher'}
@@ -22,11 +24,36 @@ module Importers
 
     def initialize(filename)
       @filename = filename
-      @extract_right_holder_regex = /(\d+)\W+([\w\s\.]+)\W+([\w\s]+)\W+([\d\.]+)?\s(\w+)\W+(\w+)\W+([\d]+,[\d]*).*/
+      @extract_right_holder_regex = /(\d+)\W+([\w\s\.]+)\W+([\w\s]+)?\W+([\d\.]+)?\s(\w+)?\W+(\w+)\W+([\d]+,[\d]*).*/
       @extract_work_regex = /(\d+)\W+(.\-.{3}\..{3}\..{3}\-.)\W+([\w\s]+)\W+(\w+)\W+(.+)/
     end
 
     def works
+      reader = PDF::Reader.new(@filename)
+      parsing_work = true
+      works = []
+      work = nil
+      right_holders = []
+      reader.pages.each do |page|
+        lines = page.text.split(/\r?\n/)
+        (0..lines.size-1).each do |line|
+          if parsing_work
+            work = work(lines[line])
+            parsing_work = false unless work.nil?
+          else
+            rh = right_holder(lines[line])
+            if rh.nil?
+              work[:right_holders] = right_holders
+              works << work
+              parsing_work = true
+              right_holders = []
+            else
+              right_holders << rh
+            end
+          end
+        end
+      end
+      works
     end
 
     def right_holder(line)
@@ -72,7 +99,7 @@ module Importers
 
     def pseudos(match)
       pseudos = []
-      pseudos << {:name => match[RightHolderIndexes::PSEUDO].strip, :main => true}
+      pseudos << {:name => match[RightHolderIndexes::PSEUDO].strip, :main => true} unless match[RightHolderIndexes::PSEUDO].nil?
     end
   end
 end

@@ -6,12 +6,12 @@ describe 'Ecad PDF Import' do
     @importer = Importers::PdfEcad.new('fixtures/importers/careqa.pdf')
   end
 
-  # it 'should list all works' do
-  #   @importer.works.count.should == 130
-  #   @importer.works[0][:iswc].should == 'T-039.782.970-7'
-  #   @importer.works[9][:right_holders].size.should == 4
-  #   @importer.works[9][:right_holders][2][:share].should == 25.00
-  # end
+  it 'should list all works' do
+    expect(@importer.works.count).to eq 130
+    expect(@importer.works[0][:iswc]).to eq 'T-039.782.970-7'
+    expect(@importer.works[9][:right_holders].size).to eq 4
+    expect(@importer.works[9][:right_holders][2][:share]).to eq 25.00
+  end
 
   it 'should recognize a right holder for 100% line' do
     line = '4882         CARLOS DE SOUZA                        CARLOS CAREQA            582.66.28.18 ABRAMUS          CA   100,                        1'
@@ -59,6 +59,18 @@ describe 'Ecad PDF Import' do
     expect(work[:external_ids][0][:source_id]).to eq '3810796'
     expect(work[:situation]).to eq 'LB'
     expect(work[:created_at]).to eq '18/03/2010'
+  end
+
+  it 'should recognize work with multi status' do
+    line = '3807935       -   .   .   -          AGORA EU SO QUERO                                           LB/HO             17/03/2010'
+    work = @importer.work(line)
+    expect(work).to_not be_nil
+    expect(work[:iswc]).to eq '-   .   .   -'
+    expect(work[:title]).to eq 'AGORA EU SO QUERO'
+    expect(work[:external_ids][0][:source_name]).to eq 'Ecad'
+    expect(work[:external_ids][0][:source_id]).to eq '3807935'
+    expect(work[:situation]).to eq 'LB/HO'
+    expect(work[:created_at]).to eq '17/03/2010'
   end
 
 end

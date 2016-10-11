@@ -35,13 +35,14 @@ describe 'Ecad PDF Import' do
     expect(rh[:ipi]).to be_nil
   end
 
-  # it "should recognize share in right holder line" do
-  #   line = "741          VELAS PROD. ARTISTICAS MUSICAIS E      VELAS                    247.22.09.80 ABRAMUS           E   8,33 20/09/95               2"
-  #   rh = @importer.right_holder(line)
-  #   rh[:name].should == "VELAS PROD. ARTISTICAS MUSICAIS E"
-  #   rh[:share].should == 8.33
-  # end
-  #
+  it 'should recognize share in right holder line' do
+    line = '741          VELAS PROD. ARTISTICAS MUSICAIS E      VELAS                    247.22.09.80 ABRAMUS           E   8,33 20/09/95               2'
+    rh = @importer.right_holder(line)
+    expect(rh[:name]).to eq 'VELAS PROD. ARTISTICAS MUSICAIS E'
+    expect(rh[:share]).to eq 8.33
+    expect(rh[:role]).to eq 'Publisher'
+  end
+
   # it "should return nil if it is not a right_holder" do
   #   line = "3810796       -   .   .   -          O RESTO E PO                                                LB             18/03/2010"
   #   rh = @importer.right_holder(line)

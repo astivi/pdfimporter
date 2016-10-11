@@ -14,7 +14,7 @@ module Importers
 
     def initialize(filename)
       @filename = filename
-      @extract_right_holder_regex = /(\d+)\W+([\w\s]+)\W+([\w\s]+)\W+([\d\.]+)?\s(\w+)\W+(\w+)\W+([\d,]+)\W+(\d+)/
+      @extract_right_holder_regex = /(\d+)\W+([\w\s\.]+)\W+([\w\s]+)\W+([\d\.]+)?\s(\w+)\W+(\w+)\W+([\d,]+).*/
     end
 
     def works

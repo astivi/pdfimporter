@@ -14,7 +14,7 @@ module Importers
 
     def initialize(filename)
       @filename = filename
-      @extract_right_holder_regex = /(\d+)\W+([\w\s\.]+)\W+([\w\s]+)\W+([\d\.]+)?\s(\w+)\W+(\w+)\W+([\d,]+).*/
+      @extract_right_holder_regex = /(\d+)\W+([\w\s\.]+)\W+([\w\s]+)\W+([\d\.]+)?\s(\w+)\W+(\w+)\W+([\d]+,[\d]*).*/
     end
 
     def works
@@ -22,7 +22,7 @@ module Importers
 
     def right_holder(line)
       match = @extract_right_holder_regex.match(line)
-      raise 'Invalid line read' if match.nil?
+      return nil if match.nil?
       {
           :name => match[RightHolderIndexes::NAME].strip,
           :pseudos => pseudos(match),

@@ -43,12 +43,12 @@ describe 'Ecad PDF Import' do
     expect(rh[:role]).to eq 'Publisher'
   end
 
-  # it "should return nil if it is not a right_holder" do
-  #   line = "3810796       -   .   .   -          O RESTO E PO                                                LB             18/03/2010"
-  #   rh = @importer.right_holder(line)
-  #   rh.should be_nil
-  # end
-  #
+  it 'should return nil if it is not a right_holder' do
+    line = '3810796       -   .   .   -          O RESTO E PO                                                LB             18/03/2010'
+    rh = @importer.right_holder(line)
+    expect(rh).to be_nil
+  end
+
   # it "should recognize work in line" do
   #   line = "3810796       -   .   .   -          O RESTO E PO                                                LB             18/03/2010"
   #   work = @importer.work(line)

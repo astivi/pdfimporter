@@ -14,7 +14,7 @@ module Importers
 
     def initialize(filename)
       @filename = filename
-      @extract_right_holder_regex = /(\d+)\W+([\w\s]+)\W+([\w\s]+)\W+([\d\.]+)\s(\w+)\W+(\w+)\W+([\d,]+)\W+(\d+)/
+      @extract_right_holder_regex = /(\d+)\W+([\w\s]+)\W+([\w\s]+)\W+([\d\.]+)?\s(\w+)\W+(\w+)\W+([\d,]+)\W+(\d+)/
     end
 
     def works
@@ -40,7 +40,7 @@ module Importers
     private
 
     def share(match)
-      match[RightHolderIndexes::SHARE].to_f
+      match[RightHolderIndexes::SHARE].gsub(',', '.').to_f #gsub necessario por causa do locale, encontrar solução independente do locale.
     end
 
     def external_ids(match)
@@ -49,7 +49,7 @@ module Importers
     end
 
     def ipi(match)
-      match[RightHolderIndexes::IPI].gsub('.', '')
+      match[RightHolderIndexes::IPI].gsub('.', '') unless match[RightHolderIndexes::IPI].nil?
     end
 
     def pseudos(match)

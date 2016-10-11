@@ -27,14 +27,14 @@ describe 'Ecad PDF Import' do
     expect(rh[:share]).to eq 100
   end
 
-  # it "should recognize share for broken percent" do
-  #   line = "16863        EDILSON DEL GROSSI FONSECA             EDILSON DEL GROSSI                     SICAM           CA 33,33                         2"
-  #   rh = @importer.right_holder(line)
-  #   rh[:name].should == "EDILSON DEL GROSSI FONSECA"
-  #   rh[:share].should == 33.33
-  #   rh[:ipi].should be_nil
-  # end
-  #
+  it 'should recognize share for broken percent' do
+    line = '16863        EDILSON DEL GROSSI FONSECA             EDILSON DEL GROSSI                     SICAM           CA 33,33                         2'
+    rh = @importer.right_holder(line)
+    expect(rh[:name]).to eq 'EDILSON DEL GROSSI FONSECA'
+    expect(rh[:share]).to eq 33.33
+    expect(rh[:ipi]).to be_nil
+  end
+
   # it "should recognize share in right holder line" do
   #   line = "741          VELAS PROD. ARTISTICAS MUSICAIS E      VELAS                    247.22.09.80 ABRAMUS           E   8,33 20/09/95               2"
   #   rh = @importer.right_holder(line)

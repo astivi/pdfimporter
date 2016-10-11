@@ -49,16 +49,16 @@ describe 'Ecad PDF Import' do
     expect(rh).to be_nil
   end
 
-  # it "should recognize work in line" do
-  #   line = "3810796       -   .   .   -          O RESTO E PO                                                LB             18/03/2010"
-  #   work = @importer.work(line)
-  #   work.should_not be_nil
-  #   work[:iswc].should == "-   .   .   -"
-  #   work[:title].should == "O RESTO E PO"
-  #   work[:external_ids][0][:source_name].should == "Ecad"
-  #   work[:external_ids][0][:source_id].should == "3810796"
-  #   work[:situation].should == "LB"
-  #   work[:created_at].should == "18/03/2010"
-  # end
+  it 'should recognize work in line' do
+    line = '3810796       -   .   .   -          O RESTO E PO                                                LB             18/03/2010'
+    work = @importer.work(line)
+    expect(work).to_not be_nil
+    expect(work[:iswc]).to eq '-   .   .   -'
+    expect(work[:title]).to eq 'O RESTO E PO'
+    expect(work[:external_ids][0][:source_name]).to eq 'Ecad'
+    expect(work[:external_ids][0][:source_id]).to eq '3810796'
+    expect(work[:situation]).to eq 'LB'
+    expect(work[:created_at]).to eq '18/03/2010'
+  end
 
 end

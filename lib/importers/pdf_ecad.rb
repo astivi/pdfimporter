@@ -12,9 +12,18 @@ module Importers
       SHARE = 7
     end
 
+    module WorkIndexes
+      SOURCE_ID = 1
+      ISWC = 2
+      TITLE = 3
+      SITUATION = 4
+      CREATED_AT = 5
+    end
+
     def initialize(filename)
       @filename = filename
       @extract_right_holder_regex = /(\d+)\W+([\w\s\.]+)\W+([\w\s]+)\W+([\d\.]+)?\s(\w+)\W+(\w+)\W+([\d]+,[\d]*).*/
+      @extract_work_regex = /(\d+)\W+(.\-.{3}\..{3}\..{3}\-.)\W+([\w\s]+)\W+(\w+)\W+(.+)/
     end
 
     def works
@@ -35,6 +44,15 @@ module Importers
     end
 
     def work(line)
+      match = @extract_work_regex.match(line)
+      return nil if match.nil?
+      {
+          :external_ids => external_ids(match),
+          :iswc => match[WorkIndexes::ISWC].strip,
+          :title => match[WorkIndexes::TITLE].strip,
+          :situation => match[WorkIndexes::SITUATION],
+          :created_at => match[WorkIndexes::CREATED_AT]
+      }
     end
 
     private
